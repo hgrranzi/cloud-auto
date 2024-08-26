@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
       rm terraform.zip
       terraform -v
       if [ -f /shared/.env ]; then
-        source /shared/.env && echo ".env file loaded"
+        export $(grep -v '^#' /shared/.env | xargs) && echo ".env file loaded"
       else
         echo ".env file not found"
       fi
