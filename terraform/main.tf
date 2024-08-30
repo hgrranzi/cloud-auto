@@ -17,7 +17,7 @@ variable available_zone {
   default = "eu-west-3a"
 }
 
-variable "prefix" {
+variable prefix {
   description = "Prefix for naming resources"
   type        = string
   default     = "dev"
@@ -26,6 +26,15 @@ variable "prefix" {
 variable admin_access_cidr_blocks {
   type = list(string)
   default = []
+}
+
+variable aws_ami_id {
+  type = string
+}
+
+variable instance_type {
+  type    = string
+  default = "t2.micro"
 }
 
 resource "aws_vpc" "app-vpc" {
@@ -114,5 +123,24 @@ resource "aws_security_group" "app-security-group" {
 
   tags = {
     Name : "${var.prefix}-security-group"
+  }
+}
+
+resource "aws_instance" "app-server" {
+  ami               = var.aws_ami_id
+  instance_type     = var.instance_type
+  subnet_id         = aws_subnet.app-subnet-1.id
+  vpc_security_group_ids = [aws_security_group.app-security-group.id]
+  availability_zone = var.available_zone
+  associate_public_ip_address = true
+
+  # todo: remove when removing ssh access
+  key_name = "mv-key"
+
+  user_data = file("install_docker.sh")
+  user_data_replace_on_change = true
+
+  tags = {
+    Name : "${var.prefix}-server"
   }
 }
