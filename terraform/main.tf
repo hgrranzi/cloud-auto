@@ -2,36 +2,62 @@ provider "aws" {
   region = "eu-west-3"
 }
 
-resource "aws_instance" "cloud_ubuntu" {
-  ami           = "ami-04a92520784b93e73"
-  instance_type = "t2.micro"
-  vpc_security_group_ids = [aws_security_group.my_security_groups.id]
-  user_data = <<EOF
-EOF
+variable vpc_cidr_block {
+  type    = string
+  default = "10.0.0.0/16"
 }
 
-resource "aws_security_group" "my_security_groups" {
-  name        = "allow_tls"
-  description = "Allow TLS inbound traffic and all outbound traffic"
+variable subnet_cidr_block {
+  type    = string
+  default = "10.0.0.0/24"
+}
 
-  ingress {
-    from_port = 80
-    to_port   = 80
-    protocol  = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+variable available_zone {
+  type    = string
+  default = "eu-west-3a"
+}
 
-  ingress {
-    from_port = 443
-    to_port   = 443
-    protocol  = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+variable "prefix" {
+  description = "Prefix for naming resources"
+  type        = string
+  default     = "dev"
+}
 
-  egress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+resource "aws_vpc" "app-vpc" {
+  cidr_block = var.vpc_cidr_block
+  tags = {
+    Name : "${var.prefix}-vpc"
   }
+}
+
+resource "aws_subnet" "app-subnet-1" {
+  vpc_id            = aws_vpc.app-vpc.id
+  cidr_block        = var.subnet_cidr_block
+  availability_zone = var.available_zone
+  tags = {
+    Name : "${var.prefix}-subnet-1"
+  }
+}
+
+resource "aws_route_table" "app-route-table" {
+  vpc_id = aws_vpc.app-vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.app-internet-gateway.id
+  }
+  tags = {
+    Name : "${var.prefix}-route-table"
+  }
+}
+
+resource "aws_internet_gateway" "app-internet-gateway" {
+  vpc_id = aws_vpc.app-vpc.id
+  tags = {
+    Name : "${var.prefix}-internet-gateway"
+  }
+}
+
+resource "aws_route_table_association" "app-route_table_a" {
+  route_table_id = aws_route_table.app-route-table.id
+  subnet_id      = aws_subnet.app-subnet-1.id
 }
