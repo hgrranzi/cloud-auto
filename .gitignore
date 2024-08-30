@@ -1,2 +1,7 @@
 .idea
 .vagrant
+
+.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
