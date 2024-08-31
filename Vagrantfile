@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
     server.vm.synced_folder ".", "/shared", type: "rsync", rsync__auto: true, rsync__exclude: ['Vagrantfile', './.vagrant']
     server.vm.provision "shell", inline: <<-SHELL
       sudo apk update
-      sudo apk add curl unzip
+      sudo apk add curl unzip git
       curl -o terraform.zip https://releases.hashicorp.com/terraform/1.9.5/terraform_1.9.5_linux_amd64.zip
       unzip terraform.zip
       sudo mv terraform /usr/local/bin/
