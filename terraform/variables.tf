@@ -32,3 +32,9 @@ variable instance_type {
   type    = string
   default = "t2.micro"
 }
+
+variable script_path {
+  description = "Script to execute after instance creation"
+  type        = string
+  default     = "scripts/install_docker.sh"
+}
