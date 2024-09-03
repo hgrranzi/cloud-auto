@@ -6,3 +6,4 @@ variable available_zone {}
 variable subnet_id {}
 variable prefix {}
 variable script_path {}
+variable ssh_private_key {}

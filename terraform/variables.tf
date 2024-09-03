@@ -38,3 +38,8 @@ variable script_path {
   type        = string
   default     = "scripts/install_docker.sh"
 }
+
+variable ssh_private_key {
+  type    = string
+  default = "id_rsa"
+}

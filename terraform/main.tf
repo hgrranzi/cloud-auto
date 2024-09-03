@@ -27,4 +27,5 @@ module "app-server" {
   subnet_id                = module.app-subnet.subnet.id
   prefix                   = var.prefix
   script_path              = var.script_path
+  ssh_private_key          = var.ssh_private_key
 }
