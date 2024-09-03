@@ -23,9 +23,8 @@
         state: present
     - name: Add Docker repository to apt sources
       apt_repository:
-        repo: "deb [arch={{ lookup('pipe', 'dpkg --print-architecture') }}] https://download.docker.com/linux/ubuntu {{ lookup('pipe', '. /etc/os-release && echo $VERSION_CODENAME') }} stable"
+        repo: deb https://download.docker.com/linux/ubuntu noble stable
         state: present
-        update_cache: yes
     - name: Install Docker and Docker Compose
       apt:
         name:
@@ -46,7 +45,7 @@
         append: yes
     - name: Restart session after docker group update
       meta: reset_connection
-    - name: Docker daemon is started
+    - name: Start Docker daemon
       systemd:
         name: docker
         state: started
