@@ -1,4 +1,17 @@
 ---
+- name: Check the server is ready
+  hosts: aws
+  tasks:
+    - name: Ensure ssh port open
+      wait_for:
+        port: 22
+        delay: 10
+        timeout: 180
+        search_regex: OpenSSH
+        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+      vars:
+        ansible_connection: local
+
 - name: Install Docker and Docker Compose
   hosts: aws
   become: yes
