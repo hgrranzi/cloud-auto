@@ -1,0 +1,53 @@
+---
+- name: Install Docker and Docker Compose
+  hosts: aws
+  become: yes
+  tasks:
+    - name: Ensure required packages are installed
+      apt:
+        name:
+          - ca-certificates
+          - curl
+          - apt-transport-https
+          - software-properties-common
+        update_cache: yes
+        state: present
+    - name: Create directory for Docker GPG key
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+    - name: Add Docker's official GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+    - name: Add Docker repository to apt sources
+      apt_repository:
+        repo: "deb [arch={{ lookup('pipe', 'dpkg --print-architecture') }}] https://download.docker.com/linux/ubuntu {{ lookup('pipe', '. /etc/os-release && echo $VERSION_CODENAME') }} stable"
+        state: present
+        update_cache: yes
+    - name: Install Docker and Docker Compose
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - docker-compose-plugin
+        update_cache: yes
+        state: present
+
+- name: Start Docker
+  hosts: aws
+  become: yes
+  tasks:
+    - name: Add ubuntu user in docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+    - name: Restart session after docker group update
+      meta: reset_connection
+    - name: Docker daemon is started
+      systemd:
+        name: docker
+        state: started
+        enabled: yes

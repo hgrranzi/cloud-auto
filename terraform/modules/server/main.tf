@@ -2,7 +2,6 @@ resource "aws_security_group" "app-security-group" {
   name   = "app-security-group"
   vpc_id = var.vpc_id
 
-  # todo: no need ssh access at all probably
   ingress {
     description = "SSH access"
     from_port   = 22
@@ -56,11 +55,8 @@ resource "aws_instance" "app-server" {
   availability_zone = var.available_zone
   associate_public_ip_address = true
 
-  # todo: remove when removing ssh access
+  # todo: automate key creation ?
   key_name = "mv-key"
-
-  user_data = file(var.script_path)
-  user_data_replace_on_change = true
 
   tags = {
     Name : "${var.prefix}-server"
