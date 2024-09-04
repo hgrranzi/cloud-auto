@@ -1,6 +1,6 @@
 ---
 - name: Check the server is ready
-  hosts: aws
+  hosts: all
   tasks:
     - name: Ensure ssh port open
       wait_for:
@@ -13,7 +13,7 @@
         ansible_connection: local
 
 - name: Install Docker and Docker Compose
-  hosts: aws
+  hosts: all
   become: yes
   tasks:
     - name: Ensure required packages are installed
@@ -48,7 +48,7 @@
         state: present
 
 - name: Start Docker
-  hosts: aws
+  hosts: all
   become: yes
   tasks:
     - name: Add ubuntu user in docker group
@@ -65,7 +65,7 @@
         enabled: yes
 
 - name: Run application
-  hosts: aws
+  hosts: all
   tasks:
     - name: Copy docker compose environment
       copy:

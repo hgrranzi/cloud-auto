@@ -59,7 +59,7 @@ resource "aws_instance" "app-server" {
   key_name = "mv-key"
 
   provisioner "local-exec" {
-    working_dir = "/shared/ansible/"
+    working_dir = "/shared/ansible"
     command     = "ansible-playbook --inventory ${self.public_ip}, --user ubuntu --private-key ${var.ssh_private_key} deploy-webapp.yml"
 
   }
