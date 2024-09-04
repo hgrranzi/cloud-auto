@@ -63,3 +63,15 @@
         name: docker
         state: started
         enabled: yes
+
+- name: Run application
+  hosts: aws
+  tasks:
+    - name: Copy docker compose environment
+      copy:
+        src: /shared/srcs
+        dest: /home/ubuntu
+    - name: Start docker containers
+      community.docker.docker_compose_v2:
+        project_src: /home/ubuntu/srcs/
+        state: present

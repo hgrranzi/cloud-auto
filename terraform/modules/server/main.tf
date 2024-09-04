@@ -58,11 +58,11 @@ resource "aws_instance" "app-server" {
   # todo: automate key creation ?
   key_name = "mv-key"
 
-  provisioner "local-exec" {
-    working_dir = "/shared/ansible"
-    command     = "ansible-playbook --inventory ${self.public_ip}, --user ubuntu --private-key ${var.ssh_private_key} deploy-webapp.yml"
-
-  }
+#   provisioner "local-exec" {
+#     working_dir = "/shared/ansible"
+#     command     = "ansible-playbook --inventory ${self.public_ip}, --user ubuntu --private-key ${var.ssh_private_key} deploy-webapp.yml"
+#
+#   }
 
   tags = {
     Name : "${var.prefix}-server"

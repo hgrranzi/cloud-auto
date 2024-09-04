@@ -33,7 +33,7 @@ services:
     depends_on:
       - db
     ports:
-      - "80:80"
+      - "8080:80"
     restart: always
     environment:
       PMA_HOST: ${WORDPRESS_DB_HOST}
