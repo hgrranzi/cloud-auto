@@ -26,17 +26,12 @@ variable admin_access_cidr_blocks {
 
 variable aws_ami_id {
   type = string
+  default = "ami-04a92520784b93e73"
 }
 
 variable instance_type {
   type    = string
   default = "t2.micro"
-}
-
-variable script_path {
-  description = "Script to execute after instance creation"
-  type        = string
-  default     = "scripts/install_docker.sh"
 }
 
 variable ssh_private_key {

@@ -26,6 +26,5 @@ module "app-server" {
   available_zone           = var.available_zone
   subnet_id                = module.app-subnet.subnet.id
   prefix                   = var.prefix
-  script_path              = var.script_path
   ssh_private_key          = var.ssh_private_key
 }
