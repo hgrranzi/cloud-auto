@@ -34,7 +34,12 @@ variable instance_type {
   default = "t2.micro"
 }
 
-variable ssh_private_key {
+variable ssh_key_name {
+  type = string
+  default = "id_rsa"
+}
+
+variable ssh_key_path {
   type    = string
   default = "id_rsa"
 }

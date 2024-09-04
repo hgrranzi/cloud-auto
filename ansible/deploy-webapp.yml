@@ -1,6 +1,7 @@
 ---
 - name: Check the server is ready
   hosts: all
+  gather_facts: no
   tasks:
     - name: Ensure ssh port open
       wait_for:

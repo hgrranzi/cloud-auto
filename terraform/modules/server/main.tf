@@ -56,11 +56,11 @@ resource "aws_instance" "app-server" {
   associate_public_ip_address = true
 
   # todo: automate key creation ?
-  key_name = "mv-key"
+  key_name = var.ssh_key_name
 
   provisioner "local-exec" {
     working_dir = "/shared/ansible"
-    command     = "ansible-playbook --inventory ${self.public_ip}, --user ubuntu --private-key ${var.ssh_private_key} deploy-webapp.yml"
+    command     = "ansible-playbook -i ${self.public_ip}, -u ubuntu --private-key ${var.ssh_key_path} deploy-webapp.yml"
 
   }
 

@@ -5,4 +5,5 @@ variable instance_type {}
 variable available_zone {}
 variable subnet_id {}
 variable prefix {}
-variable ssh_private_key {}
+variable ssh_key_name {}
+variable ssh_key_path {}
