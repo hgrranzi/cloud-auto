@@ -65,13 +65,31 @@
         state: started
         enabled: yes
 
-- name: Run application
+- name: Prepare environment
   hosts: all
+  become: yes
   tasks:
     - name: Copy docker compose environment
       copy:
         src: /shared/srcs
         dest: /home/ubuntu
+    - name: Create directory for SSL certificates
+      file:
+        path: /home/ubuntu/srcs/nginx/certs
+        state: directory
+        mode: '0755'
+    - name: Generate private key for SSL
+      openssl_privatekey:
+        path: /home/ubuntu/srcs/nginx/certs/server.key
+    - name: Generate a Self Signed OpenSSL certificate
+      openssl_certificate:
+        path: /home/ubuntu/srcs/nginx/certs/server.crt
+        privatekey_path: /home/ubuntu/srcs/nginx/certs/server.key
+        provider: selfsigned
+
+- name: Run application
+  hosts: all
+  tasks:
     - name: Start docker containers
       community.docker.docker_compose_v2:
         project_src: /home/ubuntu/srcs/

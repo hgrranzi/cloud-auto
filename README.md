@@ -10,7 +10,6 @@ soon
 ## Todo (maybe):
 
 1) several servers
-2) tls
-3) ansible variables
-4) ssh key ?
-5) init script
+2) ansible variables
+3) ssh key ?
+4) init script

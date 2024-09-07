@@ -10,6 +10,8 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - app_network
 
   wordpress:
     image: wordpress:latest
@@ -18,8 +20,6 @@ services:
       - wordpress_data:/var/www/html
     depends_on:
       - db
-    ports:
-      - "80:80"
     restart: always
     environment:
       WORDPRESS_DB_HOST: db:3306
@@ -30,6 +30,8 @@ services:
       WORDPRESS_ADMIN_USER: ${WORDPRESS_ADMIN_USER}
       WORDPRESS_ADMIN_PASSWORD: ${WORDPRESS_ADMIN_PASSWORD}
       WORDPRESS_ADMIN_EMAIL: ${WORDPRESS_ADMIN_EMAIL}
+    networks:
+      - app_network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -40,11 +42,31 @@ services:
       - "8080:80"
     restart: always
     environment:
-      PMA_HOST: ${MYSQL_HOST}
+      PMA_HOST: db:3306
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    networks:
+      - app_network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/certs:/etc/nginx/certs
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - wordpress
+    networks:
+      - app_network
 
 volumes:
   db_data:
     name: db_data
   wordpress_data:
     name: wordpress_data
+
+networks:
+  app_network:
+    driver: bridge
