@@ -15,6 +15,7 @@
 
 - name: Install Docker and Docker Compose
   hosts: all
+  gather_facts: no
   become: yes
   tasks:
     - name: Ensure required packages are installed
