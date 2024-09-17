@@ -48,6 +48,7 @@ resource "aws_security_group" "app-security-group" {
 }
 
 resource "aws_instance" "app-server" {
+  count             = var.instance_count
   ami               = var.aws_ami_id
   instance_type     = var.instance_type
   subnet_id         = var.subnet_id
@@ -65,6 +66,6 @@ resource "aws_instance" "app-server" {
   }
 
   tags = {
-    Name : "${var.prefix}-server"
+    Name : "${var.prefix}-server-${count.index + 1}"
   }
 }

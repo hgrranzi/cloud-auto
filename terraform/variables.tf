@@ -34,6 +34,17 @@ variable instance_type {
   default = "t2.micro"
 }
 
+variable "instance_count" {
+  description = " Number of EC2-instances"
+  type        = number
+  default     = 1
+
+  validation {
+    condition     = var.instance_count >= 1 && var.instance_count <= 8
+    error_message = "Var instance_count should be between 1 and 8."
+  }
+}
+
 variable ssh_key_name {
   type = string
   default = "id_rsa"

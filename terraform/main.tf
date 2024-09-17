@@ -23,6 +23,7 @@ module "app-server" {
   admin_access_cidr_blocks = var.admin_access_cidr_blocks
   aws_ami_id               = var.aws_ami_id
   instance_type            = var.instance_type
+  instance_count           = var.instance_count
   available_zone           = var.available_zone
   subnet_id                = module.app-subnet.subnet.id
   prefix                   = var.prefix
