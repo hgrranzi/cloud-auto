@@ -54,3 +54,9 @@ variable ssh_key_path {
   type    = string
   default = "id_rsa"
 }
+
+variable srcs {
+  description = "Path to application's docker compose environment on the host"
+  type = string
+  default = "/shared/srcs"
+}

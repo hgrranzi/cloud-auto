@@ -29,4 +29,5 @@ module "app-server" {
   prefix                   = var.prefix
   ssh_key_name             = var.ssh_key_name
   ssh_key_path             = var.ssh_key_path
+  srcs                     = var.srcs
 }

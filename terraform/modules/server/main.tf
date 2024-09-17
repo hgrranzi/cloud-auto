@@ -61,7 +61,7 @@ resource "aws_instance" "app-server" {
 
   provisioner "local-exec" {
     working_dir = "/shared/ansible"
-    command     = "ansible-playbook -i ${self.public_ip}, -u ubuntu --private-key ${var.ssh_key_path} deploy-webapp.yml"
+    command     = "ansible-playbook -i ${self.public_ip}, -u ubuntu --private-key ${var.ssh_key_path} deploy-webapp.yml -e srcs=${var.srcs}"
 
   }
 

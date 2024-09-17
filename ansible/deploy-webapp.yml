@@ -3,13 +3,13 @@
   hosts: all
   gather_facts: no
   tasks:
-    - name: Ensure ssh port open
+    - name: Ensure SSH port is open
       wait_for:
         port: 22
         delay: 10
         timeout: 180
         search_regex: OpenSSH
-        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+        host: "{{ ansible_ssh_host | default(ansible_host) | default(inventory_hostname) }}"
       vars:
         ansible_connection: local
 
@@ -51,14 +51,15 @@
 
 - name: Start Docker
   hosts: all
+  gather_facts: no
   become: yes
   tasks:
-    - name: Add ubuntu user in docker group
+    - name: Add ansible_user to Docker group
       user:
-        name: ubuntu
+        name: "{{ ansible_user }}"
         groups: docker
         append: yes
-    - name: Restart session after docker group update
+    - name: Restart SSH session after Docker group update
       meta: reset_connection
     - name: Start Docker daemon
       systemd:
@@ -68,30 +69,36 @@
 
 - name: Prepare environment
   hosts: all
+  gather_facts: no
   become: yes
   tasks:
-    - name: Copy docker compose environment
+    - name: Copy Docker Compose environment
       copy:
-        src: /shared/srcs
-        dest: /home/ubuntu
+        src: "{{ srcs }}"
+        dest: "/home/{{ ansible_user }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
     - name: Create directory for SSL certificates
       file:
-        path: /home/ubuntu/srcs/nginx/certs
+        path: "/home/{{ ansible_user }}/srcs/nginx/certs"
         state: directory
         mode: '0755'
     - name: Generate private key for SSL
       openssl_privatekey:
-        path: /home/ubuntu/srcs/nginx/certs/server.key
+        path: "/home/{{ ansible_user }}/srcs/nginx/certs/server.key"
     - name: Generate a Self Signed OpenSSL certificate
       openssl_certificate:
-        path: /home/ubuntu/srcs/nginx/certs/server.crt
-        privatekey_path: /home/ubuntu/srcs/nginx/certs/server.key
+        path: "/home/{{ ansible_user }}/srcs/nginx/certs/server.crt"
+        privatekey_path: "/home/{{ ansible_user }}/srcs/nginx/certs/server.key"
         provider: selfsigned
 
 - name: Run application
   hosts: all
+  gather_facts: no
+  become: yes
   tasks:
-    - name: Start docker containers
+    - name: Start Docker containers
       community.docker.docker_compose_v2:
-        project_src: /home/ubuntu/srcs/
+        project_src: "/home/{{ ansible_user }}/srcs/"
         state: present
