@@ -47,22 +47,37 @@ resource "aws_security_group" "app-security-group" {
   }
 }
 
-resource "aws_instance" "app-server" {
-  count             = var.instance_count
-  ami               = var.aws_ami_id
-  instance_type     = var.instance_type
-  subnet_id         = var.subnet_id
-  vpc_security_group_ids = [aws_security_group.app-security-group.id]
-  availability_zone = var.available_zone
-  associate_public_ip_address = true
+resource "tls_private_key" "private_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
 
-  # todo: automate key creation ?
-  key_name = var.ssh_key_name
+resource "aws_key_pair" "key_pair" {
+  key_name   = "${var.prefix}-key"
+  public_key = tls_private_key.private_key.public_key_openssh
 
   provisioner "local-exec" {
-    working_dir = "/shared/ansible"
-    command     = "ansible-playbook -i ${self.public_ip}, -u ubuntu --private-key ${var.ssh_key_path} deploy-webapp.yml -e srcs=${var.srcs}"
+    command = <<-EOT
+      echo '${tls_private_key.private_key.private_key_pem}' > /deploy/ansible/'${var.prefix}-key'.pem
+      chmod 400 /deploy/ansible/'${var.prefix}-key'.pem
+    EOT
+  }
+}
 
+resource "aws_instance" "app-server" {
+  count                       = var.instance_count
+  ami                         = var.aws_ami_id
+  instance_type               = var.instance_type
+  subnet_id                   = var.subnet_id
+  vpc_security_group_ids = [aws_security_group.app-security-group.id]
+  availability_zone           = var.available_zone
+  associate_public_ip_address = true
+
+  key_name = aws_key_pair.key_pair.key_name
+
+  provisioner "local-exec" {
+    working_dir = "/deploy/ansible"
+    command     = "ansible-playbook -i ${self.public_ip}, -u ubuntu --private-key './${var.prefix}-key.pem' deploy-webapp.yml -e srcs=${var.srcs}"
   }
 
   tags = {

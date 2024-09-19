@@ -6,6 +6,4 @@ variable instance_count {}
 variable available_zone {}
 variable subnet_id {}
 variable prefix {}
-variable ssh_key_name {}
-variable ssh_key_path {}
 variable srcs {}
